@@ -10,13 +10,13 @@ Client request:
 
 getAuctions
 
-searchAuctions [keyword]|<[maxPrice]>
+searchAuctions [keyword]
 
 getAuctionInfo [auctionID]
 
-addAuction [itemName]|[itemDescription]|[<[starting price]>
+addAuction [itemName]<>[itemDescription]
 
-doOffer [auctionID]|[amount]
+doOffer [auctionID]<>[amount]
 
 highestOffer [auctionID]
 
@@ -25,11 +25,11 @@ auctionEnds [auctionID]
 
 Server response:
 
-getAuctions [itemName],[auctionID] [itemName],[auctionID] ...
+getAuctions [itemName],[auctionID]<>[itemName],[auctionID]<>...
 
 searchAuctions -> [itemName],[auctionID],[highestOffer] [itemName],[auctionID],[highestOffer] ...
 
-getAuctionInfo -> [itemName],[itemDescription]
+getAuctionInfo -> [itemName],[itemDescription],[highestOffer]
 
 addAuction -> true or false
 

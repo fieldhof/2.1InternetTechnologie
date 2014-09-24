@@ -84,18 +84,9 @@ public class Client {
 	private String addAuction() {
 		String result = "addAuction ";
 		System.out.println("Item name:");
-		result += sc.nextLine() + "|";
+		result += sc.nextLine() + "<>";
 		System.out.println("Short item description:");
-		result += sc.nextLine() + "|";
-		System.out.println("Starting price:");
-		String price = sc.nextLine();
-		if(!price.isEmpty()){
-			try{Integer.parseInt(price);}
-			catch(NumberFormatException e){
-				price = "";
-			}
-		}
-		result += price + "|";
+		result += sc.nextLine();
 		return result;
 	}
 	
@@ -173,8 +164,8 @@ public class Client {
 				sc2.useDelimiter(",");
 				String itemName = sc2.next();
 				System.out.println("Item: " + itemName);
-				String auctionID = sc2.next();
-				System.out.println("ID: " + auctionID + "\n");
+				String auctionDesc = sc2.next();
+				System.out.println("Description: " + auctionDesc + "\n");
 				sc2.close();
 			}
 		}
@@ -190,8 +181,9 @@ public class Client {
 		}
 		
 		private void handleAddAuction(Scanner sc1) {
-			// TODO Auto-generated method stub
-			
+			if(sc1.next().equals("true")){
+				System.out.println("Item toegevoegd");
+			}
 		}
 		
 		private void handleDoOffer(Scanner sc1) {

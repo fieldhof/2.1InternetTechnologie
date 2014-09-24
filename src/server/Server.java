@@ -18,9 +18,9 @@ public class Server {
 	ArrayList<Auction> auctions = new ArrayList<Auction>();
 
 	public Server() {
-		auctions.add(new Auction("Macbook", 300));
-		auctions.add(new Auction("iMac", 300));
-		auctions.add(new Auction("Mac", 300));
+		auctions.add(new Auction("Macbook", "laptop"));
+		auctions.add(new Auction("iMac", "scherm + computer"));
+		auctions.add(new Auction("Mac", "prullenbak"));
 		initServer();
 	}
 	
@@ -83,7 +83,7 @@ public class Server {
 					case "getAuctions": response += getAuctions(); break;
 //					case "3": response = searchAuctions() ; break;
 //					case "2": response = getAuctionInfo(); break;
-//					case "4": response = addAuction(); break;
+					case "addAuction": response += addAuction(sc); break;
 //					case "5": response = doOffer(); break;
 //					case "6": response = highestOffer(); break;
 //					case "7": response = auctionEnds(); break;
@@ -101,10 +101,18 @@ public class Server {
 			}
 		}
 
+		private String addAuction(Scanner sc) {
+			sc.useDelimiter("<>");
+			String itemName = sc.next();
+			String itemDesc = sc.next();
+			auctions.add(new Auction(itemName, itemDesc));
+			return "true";
+		}
+
 		private String getAuctions() {
 			String result = "";
 			for(Auction auction : auctions){
-				result += auction.getItem() + "," + auction.getId() + "<>";
+				result += auction.getItem() + "," + auction.getDesc() + "<>";
 			}
 			return result;
 		}

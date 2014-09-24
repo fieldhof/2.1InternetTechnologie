@@ -3,6 +3,7 @@ package server;
 public class Auction {
 	
 	private String item;
+	private String desc;
 	private long expirationDate;
 	private int lowestPrice;
 	private int highestBid;
@@ -10,15 +11,15 @@ public class Auction {
 	private static int lastID = 0;
 	private int id;
 	
-	public Auction(String item, long expirationDate, int lowestPrice) {
-		this(item, expirationDate);
+	public Auction(String item, String desc, int lowestPrice) {
+		this(item, desc);
 		this.lowestPrice = lowestPrice;
 		this.highestBid = lowestPrice;
 	}
 	
-	public Auction(String item, long expirationDate) {
+	public Auction(String item, String desc) {
 		this.item = item;
-		this.expirationDate = expirationDate;
+		this.desc = desc;
 		this.highestBid = 0;
 		id = ++lastID;
 	}
@@ -50,6 +51,10 @@ public class Auction {
 	
 	public Account getHighestBidder() {
 		return highestBidder;
+	}
+	
+	public String getDesc() {
+		return desc;
 	}
 	
 	public int getId() {
