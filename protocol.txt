@@ -1,0 +1,52 @@
+Starting sequence
+
+Client connects to server
+Server responds with clientID
+Client responds with clientName
+
+
+
+Client request:
+
+getAuctions
+
+searchAuctions [keyword]|<[maxPrice]>
+
+getAuctionInfo [auctionID]
+
+addAuction [itemName]|[itemDescription]|[<[starting price]>
+
+doOffer [auctionID]|[amount]
+
+highestOffer [auctionID]
+
+auctionEnds [auctionID]
+
+
+Server response:
+
+getAuctions -> [itemName],[auctionID] [itemName],[auctionID] ...
+
+searchAuctions -> [itemName],[auctionID],[highestOffer] [itemName],[auctionID],[highestOffer] ...
+
+getAuctionInfo -> [itemName],[itemDescription]
+
+addAuction -> true or false
+
+removeAuction -> true or false
+
+doOffer -> true or false
+
+highestOffer -> [currentOffer]
+
+auctionEnds -> [dd/MM/yyyy HH/mm/ss]
+
+
+Server request:
+
+winner [auctionID]
+
+loser [auctionID]
+
+
+
