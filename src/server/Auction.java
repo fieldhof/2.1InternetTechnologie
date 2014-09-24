@@ -7,6 +7,8 @@ public class Auction {
 	private int lowestPrice;
 	private int highestBid;
 	private Account highestBidder;
+	private static int lastID = 0;
+	private int id;
 	
 	public Auction(String item, long expirationDate, int lowestPrice) {
 		this(item, expirationDate);
@@ -18,6 +20,7 @@ public class Auction {
 		this.item = item;
 		this.expirationDate = expirationDate;
 		this.highestBid = 0;
+		id = ++lastID;
 	}
 	
 	public String getItem() {
@@ -47,6 +50,10 @@ public class Auction {
 	
 	public Account getHighestBidder() {
 		return highestBidder;
+	}
+	
+	public int getId() {
+		return id;
 	}
 
 }

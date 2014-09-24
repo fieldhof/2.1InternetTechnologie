@@ -15,8 +15,16 @@ public class Server {
 	private ServerSocket serverSocket;
 	private static final int SERVER_PORT = 8080;
 	ArrayList<Socket> clients = new ArrayList<Socket>();
+	ArrayList<Auction> auctions = new ArrayList<Auction>();
 
 	public Server() {
+		auctions.add(new Auction("Macbook", 300));
+		auctions.add(new Auction("iMac", 300));
+		auctions.add(new Auction("Mac", 300));
+		initServer();
+	}
+	
+	public void initServer(){
 		System.out.println("Server starting up...");
 		try {
 			serverSocket = new ServerSocket(SERVER_PORT);
@@ -69,15 +77,17 @@ public class Server {
 						return;
 					}
 					Scanner sc = new Scanner(message);
-					String response = "";
-					switch(sc.next()){
-					case "1": response = getAuctions(); break;
-					case "3": response = searchAuctions() ; break;
-					case "2": response = getAuctionInfo(); break;
-					case "4": response = addAuction(); break;
-					case "5": response = doOffer(); break;
-					case "6": response = highestOffer(); break;
-					case "7": response = auctionEnds(); break;
+					String function = sc.next();
+					String response = function + " ";
+					switch(function){
+					case "getAuctions": response += getAuctions(); break;
+//					case "3": response = searchAuctions() ; break;
+//					case "2": response = getAuctionInfo(); break;
+//					case "4": response = addAuction(); break;
+//					case "5": response = doOffer(); break;
+//					case "6": response = highestOffer(); break;
+//					case "7": response = auctionEnds(); break;
+					
 					}
 					
 					if(!response.isEmpty()){
@@ -90,6 +100,16 @@ public class Server {
 				e.printStackTrace();
 			}
 		}
+
+		private String getAuctions() {
+			String result = "";
+			for(Auction auction : auctions){
+				result += auction.getItem() + "," + auction.getId() + "<>";
+			}
+			return result;
+		}
+		
+		
 	}
 	
 	public static void main(String[] args) {

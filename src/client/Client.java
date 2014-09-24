@@ -166,7 +166,17 @@ public class Client {
 		}
 
 		private void handleGetAuctions(Scanner sc1) {
-			
+			while(sc1.hasNext()){
+				sc1.useDelimiter("<>");
+				String product = sc1.next();
+				Scanner sc2 = new Scanner(product);
+				sc2.useDelimiter(",");
+				String itemName = sc2.next();
+				System.out.println("Item: " + itemName);
+				String auctionID = sc2.next();
+				System.out.println("ID: " + auctionID + "\n");
+				sc2.close();
+			}
 		}
 		
 		private void handleSearchAuctions(Scanner sc1) {
