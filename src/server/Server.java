@@ -19,6 +19,7 @@ public class Server {
 
 	public Server() {
 		auctions.add(new Auction("Macbook", "laptop"));
+		auctions.add(new Auction("Lenovo", "laptop"));
 		auctions.add(new Auction("iMac", "scherm + computer"));
 		auctions.add(new Auction("Mac", "prullenbak"));
 		initServer();
@@ -44,6 +45,16 @@ public class Server {
 		}
 	}
 
+	private boolean isInteger(String input){
+		try{
+			Integer.parseInt(input);
+		}
+		catch(NumberFormatException e){
+			return false;
+		}
+		return true;
+	}
+	
 	// Als er een verbinding tot stand is gebracht, start een nieuwe thread.
 	public class ClientThread extends Thread {
 		private Socket threadSocket;
@@ -81,8 +92,8 @@ public class Server {
 					String response = function + " ";
 					switch(function){
 					case "getAuctions": response += getAuctions(); break;
-//					case "3": response = searchAuctions() ; break;
-//					case "2": response = getAuctionInfo(); break;
+					case "getAuctionInfo": response += getAuctionInfo(sc); break;
+					case "searchAuctions": response += searchAuctions(sc) ; break;
 					case "addAuction": response += addAuction(sc); break;
 //					case "5": response = doOffer(); break;
 //					case "6": response = highestOffer(); break;
@@ -101,6 +112,35 @@ public class Server {
 			}
 		}
 
+		//Done
+		private String getAuctionInfo(Scanner sc) {
+			String auctionID = sc.next();
+			String result = "";
+			if(isInteger(auctionID)){
+				int id = Integer.parseInt(auctionID);
+				for(Auction auction : auctions){
+					if(auction.getId() == id){
+						result += auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid();
+						break;
+					}
+				}
+			}
+			return result;
+		}
+
+		//Done
+		private String searchAuctions(Scanner sc) {
+			String keyword = sc.next();
+			String result = "";
+			for(Auction auction : auctions){
+				if(auction.contains(keyword)){
+					result += auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid() + "<>";
+				}
+			}
+			return result;
+		}
+
+		//Done
 		private String addAuction(Scanner sc) {
 			sc.useDelimiter("<>");
 			String itemName = sc.next();
@@ -109,6 +149,7 @@ public class Server {
 			return "true";
 		}
 
+		//Done
 		private String getAuctions() {
 			String result = "";
 			for(Auction auction : auctions){
