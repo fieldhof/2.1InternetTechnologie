@@ -61,4 +61,11 @@ public class Auction {
 		return id;
 	}
 
+	public boolean contains(String keyword) {
+		if(item.contains(keyword) || desc.contains(keyword)){
+			return true;
+		}
+		return false;
+	}
+
 }

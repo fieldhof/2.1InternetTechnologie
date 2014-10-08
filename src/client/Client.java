@@ -73,8 +73,8 @@ public class Client {
 			String request = "";
 			switch (message) {
 			case "1": request = "getAuctions"; break;
-			case "3": request = searchAuctions() ; break;
 			case "2": request = getAuctionInfo(); break;
+			case "3": request = searchAuctions() ; break;
 			case "4": request = addAuction(); break;
 			case "5": request = doOffer(); break;
 			case "6": request = highestOffer(); break;
@@ -91,17 +91,19 @@ public class Client {
 		}
 	}
 
-
-	private String searchAuctions() {
-		System.out.println("Keyword for search:");
-		return "searchAuctions " + sc.nextLine();
-	}
 	
 	private String getAuctionInfo() {
 		System.out.println("Auction ID:");
 		return "getAuctionInfo " + sc.nextLine();
 	}
 	
+	//Done
+	private String searchAuctions() {
+		System.out.println("Keyword for search:");
+		return "searchAuctions " + sc.nextLine();
+	}
+	
+	//Done
 	private String addAuction() {
 		String result = "addAuction ";
 		System.out.println("Item name:");
@@ -161,15 +163,14 @@ public class Client {
 					
 					switch(sc1.next()){
 					case "Hello" : System.out.println("Connection is working");break;
-					case "badLogin" : handleBadLogin();break;
-					case "getAuctions" : handleGetAuctions(sc1) ; break;
-					case "searchAuctions" : handleSearchAuctions(sc1); break;
-					case "getAuctionInfo" : handleGetAuctionInfo(sc1); break;
-					case "addAuction"	  : handleAddAuction(sc1); break;
-					case "doOffer"  : handleDoOffer(sc1); break;
-					case "highestOffer" : handleHighestOffer(sc1); break;
-					case "auctionEnds"	: handleAuctionEnds(sc1); break;
-					case "error"	    : handleError(sc1); break;
+					case "getAuctions" 		: handleGetAuctions(sc1) ; break;
+					case "searchAuctions" 	: handleSearchAuctions(sc1); break;
+					case "getAuctionInfo" 	: handleGetAuctionInfo(sc1); break;
+					case "addAuction"	  	: handleAddAuction(sc1); break;
+					case "doOffer"			: handleDoOffer(sc1); break;
+					case "highestOffer" 	: handleHighestOffer(sc1); break;
+					case "auctionEnds"		: handleAuctionEnds(sc1); break;
+					case "error"	    	: handleError(sc1); break;
 					}
 					sc1.close();
 				}
@@ -198,30 +199,76 @@ public class Client {
 			writer.flush();
 		}
 
+		//Done
 		private void handleGetAuctions(Scanner sc1) {
+			String result = "";
 			while(sc1.hasNext()){
 				sc1.useDelimiter("<>");
 				String product = sc1.next();
+				product = product.replaceFirst(" ", "");
 				Scanner sc2 = new Scanner(product);
 				sc2.useDelimiter(",");
 				String itemName = sc2.next();
-				System.out.println("Item: " + itemName);
+				itemName = itemName.replaceFirst(" ", "");
+				result += "\n\nItem: " + itemName;
 				String auctionDesc = sc2.next();
-				System.out.println("Description: " + auctionDesc + "\n");
+				result += "\nDescription: " + auctionDesc;
 				sc2.close();
 			}
+			if(result.isEmpty()){
+				System.out.println("There are no active auctions");
+				return;
+			}
+			System.out.println(result);
 		}
 		
+		//Done
 		private void handleSearchAuctions(Scanner sc1) {
-			// TODO Auto-generated method stub
-			
+			String result = "";
+			while(sc1.hasNext()){
+				sc1.useDelimiter("<>");
+				String product = sc1.next();
+				product = product.replaceFirst(" ", "");
+				Scanner sc2 = new Scanner(product);
+				sc2.useDelimiter(",");
+				String itemName = sc2.next();
+				itemName = itemName.replaceFirst(" ", "");
+				result += "\n\nItem: " + itemName;
+				String auctionDesc = sc2.next();
+				result += "\nDescription: " + auctionDesc;
+				String highestBid = sc2.next();
+				result += "\nHighest bid: " + highestBid;
+				sc2.close();
+			}
+			if(result.isEmpty()){
+				System.out.println("There were no auctions found with this keyword");
+				return;
+			}
+			System.out.println(result);
 		}
 		
+		//Done
 		private void handleGetAuctionInfo(Scanner sc1) {
-			// TODO Auto-generated method stub
+			if(sc1.hasNext()){
+				String auction = sc1.next();
+				auction = auction.replace(" ", "");
+				Scanner sc2 = new Scanner(auction);
+				sc2.useDelimiter(",");
+				String itemName = sc2.next();
+				itemName = itemName.replaceFirst(" ", "");
+				System.out.println("\nItem: " + itemName);
+				String auctionDesc = sc2.next();
+				System.out.println("Description: " + auctionDesc);
+				String highestBid = sc2.next();
+				System.out.println("Highest bid: " + highestBid);
+				sc2.close();
+			}else{
+				System.out.println("No auction found with this ID");
+			}
 			
 		}
 		
+		//Done
 		private void handleAddAuction(Scanner sc1) {
 			if(sc1.next().equals("true")){
 				System.out.println("Item toegevoegd");
