@@ -18,34 +18,56 @@ public class Client {
 	public String username; 
 	private String password;
 	private Scanner sc;
+	private boolean loggedIn = false;
 
 	public static void main(String[] args) {
 		new Client();
 	}
 
 	public Client() {
-		sc = new Scanner(System.in);
-		System.out.println("Username:");
-		username = sc.nextLine();
-		System.out.println("Password:");
-		password = sc.nextLine();
-		
-		System.out.println("Client connecting to server...");
-		try {
-			socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-			writer = new PrintWriter(socket.getOutputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
+		while(!loggedIn) {
+			sc = new Scanner(System.in);
+			System.out.println("Username:");
+			username = sc.nextLine();
+			System.out.println("Password:");
+			password = sc.nextLine();
+			
+			System.out.println("Client connecting to server...");
+			try {
+				socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+				writer = new PrintWriter(socket.getOutputStream());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Client is connected to server");
+			writer.println(username);
+			writer.println(password);
+			writer.flush();
+			
+			BufferedReader reader;
+			try {
+				reader = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+				String message;
+				message = reader.readLine();
+				Scanner sc1 = new Scanner(message);
+				if (sc1.next().equals("Hello")) {
+					loggedIn=true;
+				}
+				sc1.close();
+			} catch (IOException e1) {
+				connected = false;
+			}
+			
+			sc.close();
+			
 		}
-		System.out.println("Client is connected to server");
-		writer.println(username);
-		writer.flush();
-		
+		System.out.println("Connection is working");
 		connected = true;
-
+		
 		ServerListener listener = new ServerListener();
 		listener.start();
-
+		
 		while (connected) {
 			String message = sc.nextLine();
 			String request = "";
@@ -67,7 +89,6 @@ public class Client {
 				writer.flush();
 			}
 		}
-		sc.close();
 	}
 
 
@@ -140,6 +161,7 @@ public class Client {
 					
 					switch(sc1.next()){
 					case "Hello" : System.out.println("Connection is working");break;
+					case "badLogin" : handleBadLogin();break;
 					case "getAuctions" : handleGetAuctions(sc1) ; break;
 					case "searchAuctions" : handleSearchAuctions(sc1); break;
 					case "getAuctionInfo" : handleGetAuctionInfo(sc1); break;
@@ -154,6 +176,26 @@ public class Client {
 			} catch (IOException e1) {
 				connected = false;
 			}
+		}
+		
+		private void handleBadLogin() {
+			sc = new Scanner(System.in);
+			System.out.println("Username:");
+			username = sc.nextLine();
+			System.out.println("Password:");
+			password = sc.nextLine();
+			
+			System.out.println("Client connecting to server...");
+			try {
+				socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+				writer = new PrintWriter(socket.getOutputStream());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Client is connected to server");
+			writer.println(username);
+			writer.println(password);
+			writer.flush();
 		}
 
 		private void handleGetAuctions(Scanner sc1) {
