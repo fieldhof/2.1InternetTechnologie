@@ -11,15 +11,16 @@ public class Auction {
 	private static int lastID = 0;
 	private int id;
 	
-	public Auction(String item, String desc, int lowestPrice) {
-		this(item, desc);
+	public Auction(String item, String desc, int lowestPrice, long duration) {
+		this(item, desc, duration);
 		this.lowestPrice = lowestPrice;
 		this.highestBid = lowestPrice;
 	}
 	
-	public Auction(String item, String desc) {
+	public Auction(String item, String desc, long duration) {
 		this.item = item;
 		this.desc = desc;
+		this.expirationDate = System.currentTimeMillis() + duration;
 		this.highestBid = 0;
 		id = ++lastID;
 	}

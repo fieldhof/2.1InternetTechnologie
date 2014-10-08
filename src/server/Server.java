@@ -18,10 +18,10 @@ public class Server {
 	ArrayList<Auction> auctions = new ArrayList<Auction>();
 
 	public Server() {
-		auctions.add(new Auction("Macbook", "laptop"));
-		auctions.add(new Auction("Lenovo", "laptop"));
-		auctions.add(new Auction("iMac", "scherm + computer"));
-		auctions.add(new Auction("Mac", "prullenbak"));
+		auctions.add(new Auction("Macbook", "laptop", 60000));
+		auctions.add(new Auction("Lenovo", "laptop", 60000));
+		auctions.add(new Auction("iMac", "scherm + computer", 60000));
+		auctions.add(new Auction("Mac", "prullenbak", 60000));
 		initServer();
 	}
 	
@@ -53,6 +53,24 @@ public class Server {
 			return false;
 		}
 		return true;
+	}
+	
+	private Auction getAuction(int auctionId){
+		for(Auction auction : auctions){
+			if(auction.getId() == auctionId){
+				return auction;
+			}
+		}
+		return null;
+	}
+	
+	private boolean isAuction(int auctionId){
+		for(Auction auction : auctions){
+			if(auction.getId() == auctionId){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	// Als er een verbinding tot stand is gebracht, start een nieuwe thread.
@@ -91,13 +109,13 @@ public class Server {
 					String function = sc.next();
 					String response = function + " ";
 					switch(function){
-					case "getAuctions": response += getAuctions(); break;
-					case "getAuctionInfo": response += getAuctionInfo(sc); break;
-					case "searchAuctions": response += searchAuctions(sc) ; break;
-					case "addAuction": response += addAuction(sc); break;
-//					case "5": response = doOffer(); break;
-//					case "6": response = highestOffer(); break;
-//					case "7": response = auctionEnds(); break;
+					case "getAuctions": 	response += getAuctions(); break;
+					case "getAuctionInfo": 	response += getAuctionInfo(sc); break;
+					case "searchAuctions": 	response += searchAuctions(sc) ; break;
+					case "addAuction": 		response += addAuction(sc); break;
+//					case "doOffer": response += doOffer(sc); break;
+					case "highestOffer": 	response += highestOffer(sc); break;
+					case "auctionEnds": 	response += auctionEnds(sc); break;
 					
 					}
 					
@@ -113,19 +131,31 @@ public class Server {
 		}
 
 		//Done
-		private String getAuctionInfo(Scanner sc) {
-			String auctionID = sc.next();
-			String result = "";
-			if(isInteger(auctionID)){
-				int id = Integer.parseInt(auctionID);
-				for(Auction auction : auctions){
-					if(auction.getId() == id){
-						result += auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid();
-						break;
-					}
-				}
+		private String auctionEnds(Scanner sc) {
+			int auctionId = sc.nextInt();
+			if(isAuction(auctionId)){
+				return "" + getAuction(auctionId).getExpirationDate();
 			}
-			return result;
+			return "";
+		}
+
+		//Done
+		private String highestOffer(Scanner sc) {
+			int auctionId = sc.nextInt();
+			if(isAuction(auctionId)){
+				return "" + getAuction(auctionId).getHighestBid();
+			}
+			return "";
+		}
+
+		//Done
+		private String getAuctionInfo(Scanner sc) {
+			int auctionId = sc.nextInt();
+			if(isAuction(auctionId)){
+				Auction auction = getAuction(auctionId);
+				return auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid();
+			}
+			return null;
 		}
 
 		//Done
@@ -145,7 +175,8 @@ public class Server {
 			sc.useDelimiter("<>");
 			String itemName = sc.next();
 			String itemDesc = sc.next();
-			auctions.add(new Auction(itemName, itemDesc));
+			long itemDuration = sc.nextLong();
+			auctions.add(new Auction(itemName, itemDesc, itemDuration));
 			return "true";
 		}
 

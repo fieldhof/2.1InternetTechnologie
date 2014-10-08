@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Client {
@@ -70,7 +73,7 @@ public class Client {
 		sc.close();
 	}
 
-	
+	//Done
 	private String getAuctionInfo() {
 		System.out.println("Auction ID:");
 		return "getAuctionInfo " + sc.nextLine();
@@ -88,7 +91,14 @@ public class Client {
 		System.out.println("Item name:");
 		result += sc.nextLine() + "<>";
 		System.out.println("Short item description:");
-		result += sc.nextLine();
+		result += sc.nextLine() + "<>";
+		System.out.println("Duration in minutes:");
+		String input = sc.nextLine();
+		while(!isInteger(input)){
+			System.out.println("Not a number, try again: ");
+			input = sc.nextLine();
+		}
+		result += (Long.parseLong(input) * 60000L);
 		return result;
 	}
 	
@@ -105,16 +115,19 @@ public class Client {
 		return result;
 	}
 	
+	//Done
 	private String highestOffer() {
 		System.out.println("Auction ID:");
 		return "highestOffer " + sc.nextLine();
 	}
 	
+	//Done
 	private String auctionEnds() {
 		System.out.println("Auction ID:");
 		return "auctionEnds " + sc.nextLine();		
 	}
 	
+	//Done
 	private void wrongInput() {
 		System.out.println("Wrong input, please try again");
 	}
@@ -129,6 +142,20 @@ public class Client {
 		return true;
 	}
 
+	public static String longToDate(long date){
+		long dif = date - System.currentTimeMillis();
+		int hours = (int) (dif / 360000);
+		dif = dif % 360000;
+		int min = (int) (dif / 60000);
+		dif = dif % 60000;
+		int sec = (int) (dif / 1000);
+		String result = "";
+		if(hours > 0)	{result += "Hours: " + hours;}
+		if(min > 0)		{result += "\nMinutes: " + min;}
+		if(sec > 0)		{result += "\nSeconds: " + sec;}
+		return 	result;
+	}
+	
 	public class ServerListener extends Thread {
 		public void run() {
 			BufferedReader reader;
@@ -230,7 +257,9 @@ public class Client {
 		//Done
 		private void handleAddAuction(Scanner sc1) {
 			if(sc1.next().equals("true")){
-				System.out.println("Item toegevoegd");
+				System.out.println("Item added");
+			}else{
+				System.out.println("Item not added");
 			}
 		}
 		
@@ -239,13 +268,23 @@ public class Client {
 			
 		}
 		
+		//Done
 		private void handleHighestOffer(Scanner sc1) {
-			// TODO Auto-generated method stub
+			if(sc1.hasNextInt()){
+				System.out.println("Highest bid: " + sc1.nextInt());
+			}else{
+				System.out.println("Auction doesn't exist");
+			}
 			
 		}
 		
+		//Done
 		private void handleAuctionEnds(Scanner sc1) {
-			// TODO Auto-generated method stub
+			if(sc1.hasNextLong()){
+				System.out.println(longToDate(sc1.nextLong()));
+			}else{
+				System.out.println("Auction doesn't exist");
+			}
 			
 		}
 		
