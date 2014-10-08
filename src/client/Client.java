@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Scanner;
 
 public class Client {
@@ -42,28 +39,24 @@ public class Client {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Client is connected to server");
 			writer.println(username);
 			writer.println(password);
 			writer.flush();
 			
 			BufferedReader reader;
 			try {
-				reader = new BufferedReader(new InputStreamReader(
-						socket.getInputStream()));
-				String message;
-				message = reader.readLine();
+				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				String message = reader.readLine();
 				Scanner sc1 = new Scanner(message);
 				if (sc1.next().equals("Hello")) {
-					loggedIn=true;
+					loggedIn = true;
+				}else{
+					System.out.println("Wrong username or password");
 				}
 				sc1.close();
 			} catch (IOException e1) {
 				connected = false;
-			}
-			
-			sc.close();
-			
+			}			
 		}
 		System.out.println("Connection is working");
 		connected = true;
@@ -153,6 +146,11 @@ public class Client {
 		System.out.println("Wrong input, please try again");
 	}
 
+	/**
+	 * Checks if the given String is an Integer
+	 * @param input
+	 * @return
+	 */
 	private boolean isInteger(String input){
 		try{
 			Integer.parseInt(input);
@@ -163,7 +161,12 @@ public class Client {
 		return true;
 	}
 
-	public static String longToDate(long date){
+	/**
+	 * Converts a long number to a readable time left string
+	 * @param date
+	 * @return
+	 */
+	public static String longToReadableTimeLeft(long date){
 		long dif = date - System.currentTimeMillis();
 		int hours = (int) (dif / 360000);
 		dif = dif % 360000;
@@ -204,26 +207,6 @@ public class Client {
 			} catch (IOException e1) {
 				connected = false;
 			}
-		}
-		
-		private void handleBadLogin() {
-			sc = new Scanner(System.in);
-			System.out.println("Username:");
-			username = sc.nextLine();
-			System.out.println("Password:");
-			password = sc.nextLine();
-			
-			System.out.println("Client connecting to server...");
-			try {
-				socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-				writer = new PrintWriter(socket.getOutputStream());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			System.out.println("Client is connected to server");
-			writer.println(username);
-			writer.println(password);
-			writer.flush();
 		}
 
 		//Done
@@ -322,7 +305,7 @@ public class Client {
 		//Done
 		private void handleAuctionEnds(Scanner sc1) {
 			if(sc1.hasNextLong()){
-				System.out.println(longToDate(sc1.nextLong()));
+				System.out.println(longToReadableTimeLeft(sc1.nextLong()));
 			}else{
 				System.out.println("Auction doesn't exist");
 			}
@@ -330,8 +313,9 @@ public class Client {
 		}
 		
 		private void handleError(Scanner sc1) {
-			// TODO Auto-generated method stub
-			
+			if(sc1.hasNextLine()){
+				System.out.println("Error!" + sc1.nextLine());
+			}
 		}
 
 
