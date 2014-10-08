@@ -16,12 +16,17 @@ public class Server {
 	private static final int SERVER_PORT = 8080;
 	ArrayList<Socket> clients = new ArrayList<Socket>();
 	ArrayList<Auction> auctions = new ArrayList<Auction>();
+	ArrayList<Account> accounts = new ArrayList<Account>();
 
 	public Server() {
 		auctions.add(new Auction("Macbook", "laptop", 60000));
 		auctions.add(new Auction("Lenovo", "laptop", 60000));
 		auctions.add(new Auction("iMac", "scherm + computer", 60000));
 		auctions.add(new Auction("Mac", "prullenbak", 60000));
+		accounts.add(new Account("marco", "jansen"));
+		accounts.add(new Account("daan", "veldhof"));
+		accounts.add(new Account("paul", "degroot"));
+		
 		initServer();
 	}
 	
@@ -76,7 +81,7 @@ public class Server {
 	// Als er een verbinding tot stand is gebracht, start een nieuwe thread.
 	public class ClientThread extends Thread {
 		private Socket threadSocket;
-		private String name;
+		private Account account;
 		private PrintWriter writer;
 		private boolean connected = true;
 
@@ -91,10 +96,22 @@ public class Server {
 				//first contact
 				BufferedReader reader = new BufferedReader(new InputStreamReader(threadSocket.getInputStream()));
 				writer = new PrintWriter(threadSocket.getOutputStream());
-				name = reader.readLine();
-				writer.println("Hello");
-				writer.flush();
-				System.out.println(name + " connected");
+				String username = reader.readLine();
+				String password = reader.readLine();
+				for (Account account : accounts) {
+					if (account.isThisAccount(username, password)) {
+						this.account = account;
+					}
+				}
+				if (account == null) {
+					writer.println("badLogin");
+					writer.flush();
+					connected = false;
+				} else {
+					writer.println("Hello");
+					writer.flush();
+					System.out.println(username + " connected");
+				}
 				
 				
 				while(connected){
@@ -102,7 +119,7 @@ public class Server {
 					try{
 						message = reader.readLine();
 					}catch(SocketException e){
-						System.out.println(name + " left the auction");
+						System.out.println(username + " left the auction");
 						return;
 					}
 					Scanner sc = new Scanner(message);
