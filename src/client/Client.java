@@ -39,28 +39,24 @@ public class Client {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Client is connected to server");
 			writer.println(username);
 			writer.println(password);
 			writer.flush();
 			
 			BufferedReader reader;
 			try {
-				reader = new BufferedReader(new InputStreamReader(
-						socket.getInputStream()));
-				String message;
-				message = reader.readLine();
+				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				String message = reader.readLine();
 				Scanner sc1 = new Scanner(message);
 				if (sc1.next().equals("Hello")) {
-					loggedIn=true;
+					loggedIn = true;
+				}else{
+					System.out.println("Wrong username or password");
 				}
 				sc1.close();
 			} catch (IOException e1) {
 				connected = false;
-			}
-			
-			sc.close();
-			
+			}			
 		}
 		System.out.println("Connection is working");
 		connected = true;
@@ -91,7 +87,7 @@ public class Client {
 		}
 	}
 
-	
+	//Done
 	private String getAuctionInfo() {
 		System.out.println("Auction ID:");
 		return "getAuctionInfo " + sc.nextLine();
@@ -109,7 +105,14 @@ public class Client {
 		System.out.println("Item name:");
 		result += sc.nextLine() + "<>";
 		System.out.println("Short item description:");
-		result += sc.nextLine();
+		result += sc.nextLine() + "<>";
+		System.out.println("Duration in minutes:");
+		String input = sc.nextLine();
+		while(!isInteger(input)){
+			System.out.println("Not a number, try again: ");
+			input = sc.nextLine();
+		}
+		result += (Long.parseLong(input) * 60000L);
 		return result;
 	}
 	
@@ -126,20 +129,28 @@ public class Client {
 		return result;
 	}
 	
+	//Done
 	private String highestOffer() {
 		System.out.println("Auction ID:");
 		return "highestOffer " + sc.nextLine();
 	}
 	
+	//Done
 	private String auctionEnds() {
 		System.out.println("Auction ID:");
 		return "auctionEnds " + sc.nextLine();		
 	}
 	
+	//Done
 	private void wrongInput() {
 		System.out.println("Wrong input, please try again");
 	}
 
+	/**
+	 * Checks if the given String is an Integer
+	 * @param input
+	 * @return
+	 */
 	private boolean isInteger(String input){
 		try{
 			Integer.parseInt(input);
@@ -150,6 +161,25 @@ public class Client {
 		return true;
 	}
 
+	/**
+	 * Converts a long number to a readable time left string
+	 * @param date
+	 * @return
+	 */
+	public static String longToReadableTimeLeft(long date){
+		long dif = date - System.currentTimeMillis();
+		int hours = (int) (dif / 360000);
+		dif = dif % 360000;
+		int min = (int) (dif / 60000);
+		dif = dif % 60000;
+		int sec = (int) (dif / 1000);
+		String result = "";
+		if(hours > 0)	{result += "Hours: " + hours;}
+		if(min > 0)		{result += "\nMinutes: " + min;}
+		if(sec > 0)		{result += "\nSeconds: " + sec;}
+		return 	result;
+	}
+	
 	public class ServerListener extends Thread {
 		public void run() {
 			BufferedReader reader;
@@ -177,26 +207,6 @@ public class Client {
 			} catch (IOException e1) {
 				connected = false;
 			}
-		}
-		
-		private void handleBadLogin() {
-			sc = new Scanner(System.in);
-			System.out.println("Username:");
-			username = sc.nextLine();
-			System.out.println("Password:");
-			password = sc.nextLine();
-			
-			System.out.println("Client connecting to server...");
-			try {
-				socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-				writer = new PrintWriter(socket.getOutputStream());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			System.out.println("Client is connected to server");
-			writer.println(username);
-			writer.println(password);
-			writer.flush();
 		}
 
 		//Done
@@ -271,7 +281,9 @@ public class Client {
 		//Done
 		private void handleAddAuction(Scanner sc1) {
 			if(sc1.next().equals("true")){
-				System.out.println("Item toegevoegd");
+				System.out.println("Item added");
+			}else{
+				System.out.println("Item not added");
 			}
 		}
 		
@@ -280,19 +292,30 @@ public class Client {
 			
 		}
 		
+		//Done
 		private void handleHighestOffer(Scanner sc1) {
-			// TODO Auto-generated method stub
+			if(sc1.hasNextInt()){
+				System.out.println("Highest bid: " + sc1.nextInt());
+			}else{
+				System.out.println("Auction doesn't exist");
+			}
 			
 		}
 		
+		//Done
 		private void handleAuctionEnds(Scanner sc1) {
-			// TODO Auto-generated method stub
+			if(sc1.hasNextLong()){
+				System.out.println(longToReadableTimeLeft(sc1.nextLong()));
+			}else{
+				System.out.println("Auction doesn't exist");
+			}
 			
 		}
 		
 		private void handleError(Scanner sc1) {
-			// TODO Auto-generated method stub
-			
+			if(sc1.hasNextLine()){
+				System.out.println("Error!" + sc1.nextLine());
+			}
 		}
 
 

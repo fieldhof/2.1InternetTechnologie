@@ -19,10 +19,10 @@ public class Server {
 	ArrayList<Account> accounts = new ArrayList<Account>();
 
 	public Server() {
-		auctions.add(new Auction("Macbook", "laptop"));
-		auctions.add(new Auction("Lenovo", "laptop"));
-		auctions.add(new Auction("iMac", "scherm + computer"));
-		auctions.add(new Auction("Mac", "prullenbak"));
+		auctions.add(new Auction("Macbook", "laptop", 60000));
+		auctions.add(new Auction("Lenovo", "laptop", 60000));
+		auctions.add(new Auction("iMac", "scherm + computer", 60000));
+		auctions.add(new Auction("Mac", "prullenbak", 60000));
 		accounts.add(new Account("marco", "jansen"));
 		accounts.add(new Account("daan", "veldhof"));
 		accounts.add(new Account("paul", "degroot"));
@@ -49,15 +49,18 @@ public class Server {
 			}
 		}
 	}
-
-	private boolean isInteger(String input){
-		try{
-			Integer.parseInt(input);
+	
+	private Auction getAuction(int auctionId){
+		for(Auction auction : auctions){
+			if(auction.getId() == auctionId){
+				return auction;
+			}
 		}
-		catch(NumberFormatException e){
-			return false;
-		}
-		return true;
+		return null;
+	}
+	
+	private boolean isAuction(int auctionId){
+		return getAuction(auctionId) != null;
 	}
 	
 	// Als er een verbinding tot stand is gebracht, start een nieuwe thread.
@@ -106,16 +109,16 @@ public class Server {
 					}
 					Scanner sc = new Scanner(message);
 					String function = sc.next();
-					String response = function + " ";
+					String response = "";
 					switch(function){
-					case "getAuctions": response += getAuctions(); break;
-					case "getAuctionInfo": response += getAuctionInfo(sc); break;
-					case "searchAuctions": response += searchAuctions(sc) ; break;
-					case "addAuction": response += addAuction(sc); break;
-//					case "5": response = doOffer(); break;
-//					case "6": response = highestOffer(); break;
-//					case "7": response = auctionEnds(); break;
-					
+					case "getAuctions": 	response = getAuctions(); break;
+					case "getAuctionInfo": 	response = getAuctionInfo(sc); break;
+					case "searchAuctions": 	response = searchAuctions(sc) ; break;
+					case "addAuction": 		response = addAuction(sc); break;
+//					case "doOffer": response += doOffer(sc); break;
+					case "highestOffer": 	response = highestOffer(sc); break;
+					case "auctionEnds": 	response = auctionEnds(sc); break;
+					default: 				response = "error no valid command";
 					}
 					
 					if(!response.isEmpty()){
@@ -130,45 +133,80 @@ public class Server {
 		}
 
 		//Done
-		private String getAuctionInfo(Scanner sc) {
-			String auctionID = sc.next();
-			String result = "";
-			if(isInteger(auctionID)){
-				int id = Integer.parseInt(auctionID);
-				for(Auction auction : auctions){
-					if(auction.getId() == id){
-						result += auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid();
-						break;
-					}
+		private String auctionEnds(Scanner sc) {
+			String result = "auctionEnds ";
+			if(sc.hasNextInt()){
+				int auctionId = sc.nextInt();
+				if(isAuction(auctionId)){
+					return result + getAuction(auctionId).getExpirationDate();
 				}
+				return "error auction " + auctionId + " doesn't exist";
 			}
-			return result;
+			return "error no valid auction id";
+		}
+
+		//Done
+		private String highestOffer(Scanner sc) {
+			String result = "highestOffer ";
+			if(sc.hasNextInt()){
+				int auctionId = sc.nextInt();
+				if(isAuction(auctionId)){
+					return result + getAuction(auctionId).getHighestBid();
+				}
+				return "error auction " + auctionId + " doesn't exist";
+			}
+			return "error No valid auction id";
+		}
+
+		//Done
+		private String getAuctionInfo(Scanner sc) {
+			String result = "getAuctionInfo ";
+			if(sc.hasNextInt()){
+				int auctionId = sc.nextInt();
+				if(isAuction(auctionId)){
+					Auction auction = getAuction(auctionId);
+					return result + auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid();
+				}
+				return "error auction " + auctionId + " doesn't exist";
+			}
+			return "error No valid auction id";
 		}
 
 		//Done
 		private String searchAuctions(Scanner sc) {
-			String keyword = sc.next();
-			String result = "";
-			for(Auction auction : auctions){
-				if(auction.contains(keyword)){
-					result += auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid() + "<>";
+			if(sc.hasNext()){
+				String keyword = sc.next();
+				String result = "searchAuctions ";
+				for(Auction auction : auctions){
+					if(auction.contains(keyword)){
+						result += auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid() + "<>";
+					}
 				}
+				return result;
 			}
-			return result;
+			return "error No keyword";
 		}
 
 		//Done
 		private String addAuction(Scanner sc) {
 			sc.useDelimiter("<>");
-			String itemName = sc.next();
-			String itemDesc = sc.next();
-			auctions.add(new Auction(itemName, itemDesc));
-			return "true";
+			if(sc.hasNext()){
+				String itemName = sc.next();
+				if(sc.hasNext()){
+					String itemDesc = sc.next();
+					if(sc.hasNextLong()){
+						long itemDuration = sc.nextLong();
+						auctions.add(new Auction(itemName, itemDesc, itemDuration));
+						return "addAuction true";
+					}
+				}
+			}
+			return "error no valid parameters for addAuction";
 		}
 
 		//Done
 		private String getAuctions() {
-			String result = "";
+			String result = "getAuctions ";
 			for(Auction auction : auctions){
 				result += auction.getItem() + "," + auction.getDesc() + "<>";
 			}
