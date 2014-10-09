@@ -15,6 +15,7 @@ public class Client {
 	public Socket socket;
 	private boolean connected = false;
 	private PrintWriter writer;
+	private BufferedReader reader;
 	public String username; 
 	private String password;
 	private Scanner sc;
@@ -25,6 +26,15 @@ public class Client {
 	}
 
 	public Client() {
+		try {
+			System.out.println("Connecting to server...");
+			socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+			writer = new PrintWriter(socket.getOutputStream());
+			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			System.out.println("Connection working");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		while(!loggedIn) {
 			sc = new Scanner(System.in);
 			System.out.println("Username:");
@@ -32,23 +42,15 @@ public class Client {
 			System.out.println("Password:");
 			password = sc.nextLine();
 			
-			System.out.println("Client connecting to server...");
-			try {
-				socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-				writer = new PrintWriter(socket.getOutputStream());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 			writer.println(username);
 			writer.println(password);
 			writer.flush();
 			
-			BufferedReader reader;
 			try {
-				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String message = reader.readLine();
 				Scanner sc1 = new Scanner(message);
 				if (sc1.next().equals("Hello")) {
+					System.out.println("Login successful");
 					loggedIn = true;
 				}else{
 					System.out.println("Wrong username or password");
@@ -58,7 +60,7 @@ public class Client {
 				connected = false;
 			}			
 		}
-		System.out.println("Connection is working");
+		System.out.println("Press h for info of all commands");
 		connected = true;
 		
 		ServerListener listener = new ServerListener();
@@ -76,6 +78,8 @@ public class Client {
 			case "6": request = highestOffer(); break;
 			case "7": request = auctionEnds(); break;
 			
+			case "h": 
+			case "help": showInfo(); break;
 			case "x": connected = false; break;
 			default:  wrongInput(); break;
 			}
@@ -117,7 +121,7 @@ public class Client {
 	}
 	
 	private String doOffer() {
-		String result = "";
+		String result = "doOffer ";
 		System.out.println("Auction ID:");
 		result += sc.nextLine() + "<>";
 		System.out.println("New offer:");
@@ -126,7 +130,8 @@ public class Client {
 			System.out.println("Not a number, please try again");
 			offer = sc.nextLine();
 		}
-		return result;
+		
+		return result + offer;
 	}
 	
 	//Done
@@ -180,19 +185,28 @@ public class Client {
 		return 	result;
 	}
 	
+	/**
+	 * Shows all the commands that can be send to the server
+	 */
+	public void showInfo(){
+		System.out.println(	"1: Get info of all auctions\n"
+						  + "2: Get info of one auction\n"
+						  + "3: Search auctions by keyword\n"
+						  + "4: Add auction\n"
+						  + "5: Do an offer\n"
+						  + "6: Get highest bid of auction\n"
+						  + "7: Get end date of auction");
+	}
+	
 	public class ServerListener extends Thread {
 		public void run() {
-			BufferedReader reader;
 			try {
-				reader = new BufferedReader(new InputStreamReader(
-						socket.getInputStream()));
 				String message;
 				while (connected) {
 					message = reader.readLine();
 					Scanner sc1 = new Scanner(message);
 					
 					switch(sc1.next()){
-					case "Hello" 			: System.out.println("Connection is working");break;
 					case "getAuctions" 		: handleGetAuctions(sc1) ; break;
 					case "searchAuctions" 	: handleSearchAuctions(sc1); break;
 					case "getAuctionInfo" 	: handleGetAuctionInfo(sc1); break;
@@ -292,8 +306,13 @@ public class Client {
 		}
 		
 		private void handleDoOffer(Scanner sc1) {
-			// TODO Auto-generated method stub
-			
+			if(sc1.hasNext()){
+				if(sc1.next().equals("true")){
+					System.out.println("Bid has been placed");
+				}else{
+					System.out.println("Bid wasn't high enough");
+				}
+			}
 		}
 		
 		//Done

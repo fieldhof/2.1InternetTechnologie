@@ -73,7 +73,7 @@ public class Server {
 		private Socket threadSocket;
 		private Account account;
 		private PrintWriter writer;
-		private boolean connected = true;
+		private boolean connected = false;
 
 		
 		public ClientThread(Socket socket) {
@@ -86,32 +86,34 @@ public class Server {
 				//first contact
 				BufferedReader reader = new BufferedReader(new InputStreamReader(threadSocket.getInputStream()));
 				writer = new PrintWriter(threadSocket.getOutputStream());
-				String username = reader.readLine();
-				String password = reader.readLine();
-				for (Account account : accounts) {
-					if (account.isThisAccount(username, password)) {
-						this.account = account;
+				while(!connected){
+					String username = reader.readLine();
+					String password = reader.readLine();
+					for (Account account : accounts) {
+						if (account.isThisAccount(username, password)) {
+							this.account = account;
+						}
+					}
+					if (account == null) {
+						writer.println("badLogin");
+						writer.flush();
+					} else {
+						connected = true;
+						writer.println("Hello");
+						writer.flush();
+						System.out.println(username + " connected");
 					}
 				}
-				if (account == null) {
-					writer.println("badLogin");
-					writer.flush();
-					connected = false;
-				} else {
-					writer.println("Hello");
-					writer.flush();
-					System.out.println(username + " connected");
-				}
-				
 				
 				while(connected){
 					String message = "";
 					try{
 						message = reader.readLine();
 					}catch(SocketException e){
-						System.out.println(username + " left the auction");
+						System.out.println(account.getUsername() + " left the auction");
 						return;
 					}
+					System.out.println(message);
 					Scanner sc = new Scanner(message);
 					String function = sc.next();
 					String response = "";
@@ -120,7 +122,7 @@ public class Server {
 					case "getAuctionInfo": 	response = getAuctionInfo(sc); break;
 					case "searchAuctions": 	response = searchAuctions(sc) ; break;
 					case "addAuction": 		response = addAuction(sc); break;
-//					case "doOffer": response += doOffer(sc); break;
+					case "doOffer": 		response = doOffer(sc); break;
 					case "highestOffer": 	response = highestOffer(sc); break;
 					case "auctionEnds": 	response = auctionEnds(sc); break;
 					default: 				response = "error no valid command";
@@ -135,6 +137,29 @@ public class Server {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+
+		
+		private String doOffer(Scanner sc) {
+			String result = "doOffer ";
+			sc.useDelimiter("<>");
+			if(sc.hasNextInt()){
+				int auctionId = sc.nextInt();
+				if(isAuction(auctionId)){
+					Auction auction = getAuction(auctionId);
+					if(sc.hasNextInt()){
+						int price = sc.nextInt();
+						if(price > auction.getHighestBid()){
+							auction.setHighestBid(price, account);
+							return result + "true";
+						}
+						return result + "false";
+					}
+					return "error No valid price given";
+				}
+				return "error Auction doesn't exist";
+			}
+			return "error No valid arguments were given";
 		}
 
 		//Done
