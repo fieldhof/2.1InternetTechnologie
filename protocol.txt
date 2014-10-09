@@ -1,8 +1,11 @@
 Starting sequence
 
-Client connects to server
-Server responds with clientID
-Client responds with clientName
+
+1. Client connects to server
+2. Client logs in with username and password
+3. Server checks username/password
+4. Incorrect -> log in again (Back to step 2)
+5. Correct -> Server responds with Hello (Caught by client showing login successful).
 
 
 
@@ -25,21 +28,21 @@ auctionEnds [auctionID]
 
 Server response:
 
-getAuctions [itemName],[auctionID]<>[itemName],[auctionID]<>...
+getAuctions 		-> [auctionID],[itemName],[itemDescription]<>[auctionID],[itemName],[itemDescription]<>...
 
-searchAuctions -> [itemName],[auctionID],[highestOffer]<>[itemName],[auctionID],[highestOffer]<> ...
+searchAuctions 		-> [auctionID],[itemName],[itemDescription],[highestOffer]<>[auctionID],[itemName],[itemDescription],[highestOffer]<> ...
 
-getAuctionInfo -> [itemName],[itemDescription],[highestOffer]
+getAuctionInfo 		-> [itemName],[itemDescription],[highestOffer]
 
-addAuction -> true or false
+addAuction 			-> true or false
 
-removeAuction -> true or false
+removeAuction 		-> true or false
 
-doOffer -> true or false
+doOffer 			-> true or false
 
-highestOffer -> [currentOffer]
+highestOffer 		-> [currentOffer]
 
-auctionEnds -> [dd/MM/yyyy HH/mm/ss]
+auctionEnds 		-> [dd/MM/yyyy HH/mm/ss]
 
 
 Server request:
