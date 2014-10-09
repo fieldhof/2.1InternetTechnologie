@@ -241,9 +241,11 @@ public class Client {
 				product = product.replaceFirst(" ", "");
 				Scanner sc2 = new Scanner(product);
 				sc2.useDelimiter(",");
+				String itemId = sc2.next();
+				result += "\n\nid: " + itemId;
 				String itemName = sc2.next();
 				itemName = itemName.replaceFirst(" ", "");
-				result += "\n\nItem: " + itemName;
+				result += "\nItem: " + itemName;
 				String auctionDesc = sc2.next();
 				result += "\nDescription: " + auctionDesc;
 				sc2.close();
@@ -264,9 +266,11 @@ public class Client {
 				product = product.replaceFirst(" ", "");
 				Scanner sc2 = new Scanner(product);
 				sc2.useDelimiter(",");
+				String itemId = sc2.next();
+				result += "\n\nId: " + itemId;
 				String itemName = sc2.next();
 				itemName = itemName.replaceFirst(" ", "");
-				result += "\n\nItem: " + itemName;
+				result += "\nItem: " + itemName;
 				String auctionDesc = sc2.next();
 				result += "\nDescription: " + auctionDesc;
 				String highestBid = sc2.next();

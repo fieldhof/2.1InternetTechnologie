@@ -209,7 +209,7 @@ public class Server {
 				String result = "searchAuctions ";
 				for(Auction auction : auctions){
 					if(auction.contains(keyword)){
-						result += auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid() + "<>";
+						result += auction.getId() + "," + auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid() + "<>";
 					}
 				}
 				return result;
@@ -242,7 +242,7 @@ public class Server {
 		private String getAuctions() {
 			String result = "getAuctions ";
 			for(Auction auction : auctions){
-				result += auction.getItem() + "," + auction.getDesc() + "<>";
+				result += auction.getId() + "," + auction.getItem() + "," + auction.getDesc() + "<>";
 			}
 			return result;
 		}
