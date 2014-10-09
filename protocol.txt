@@ -5,7 +5,7 @@ Starting sequence
 2. Client logs in with username and password
 3. Server checks username/password
 4. Incorrect -> log in again (Back to step 2)
-5. Correct -> Server responds with Hello (Caught by client showing login successful).
+4. Correct   -> Server responds with Hello (Caught by client showing login successful).
 
 
 
