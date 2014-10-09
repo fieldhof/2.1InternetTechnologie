@@ -60,7 +60,12 @@ public class Server {
 	}
 	
 	private boolean isAuction(int auctionId){
-		return getAuction(auctionId) != null;
+		for(Auction auction : auctions){
+			if(auction.getId() == auctionId){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	// Als er een verbinding tot stand is gebracht, start een nieuwe thread.

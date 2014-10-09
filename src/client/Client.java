@@ -119,7 +119,7 @@ public class Client {
 	private String doOffer() {
 		String result = "";
 		System.out.println("Auction ID:");
-		result += sc.nextLine() + "|";
+		result += sc.nextLine() + "<>";
 		System.out.println("New offer:");
 		String offer = sc.nextLine();
 		while(!isInteger(offer)){
@@ -151,7 +151,7 @@ public class Client {
 	 * @param input
 	 * @return
 	 */
-	private boolean isInteger(String input){
+	private static boolean isInteger(String input){
 		try{
 			Integer.parseInt(input);
 		}
@@ -317,10 +317,5 @@ public class Client {
 				System.out.println("Error!" + sc1.nextLine());
 			}
 		}
-
-
-
-		
 	}
-
 }
