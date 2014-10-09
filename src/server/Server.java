@@ -226,14 +226,18 @@ public class Server {
 					String itemDesc = sc.next();
 					if(sc.hasNextLong()){
 						long itemDuration = sc.nextLong();
-						auctions.add(new Auction(itemName, itemDesc, itemDuration));
+						if(sc.hasNextInt()){
+							int lowestPrice = sc.nextInt();
+							auctions.add(new Auction(itemName, itemDesc, itemDuration, lowestPrice));
+						}else{
+							auctions.add(new Auction(itemName, itemDesc, itemDuration));
+						}
 						return "addAuction true";
 					}
 				}
 			}
 			return "error no valid parameters for addAuction";
 		}
-
 		//Done
 		private String getAuctions() {
 			String result = "getAuctions ";

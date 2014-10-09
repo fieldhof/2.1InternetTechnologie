@@ -5,15 +5,13 @@ public class Auction {
 	private String item;
 	private String desc;
 	private long expirationDate;
-	private int lowestPrice;
 	private int highestBid;
 	private Account highestBidder;
 	private static int lastID = 0;
 	private int id;
 	
-	public Auction(String item, String desc, int lowestPrice, long duration) {
+	public Auction(String item, String desc, long duration, int lowestPrice) {
 		this(item, desc, duration);
-		this.lowestPrice = lowestPrice;
 		this.highestBid = lowestPrice;
 	}
 	
@@ -31,10 +29,6 @@ public class Auction {
 	
 	public long getExpirationDate() {
 		return expirationDate;
-	}
-	
-	public int getLowestPrice() {
-		return lowestPrice;
 	}
 	
 	public int getHighestBid() {

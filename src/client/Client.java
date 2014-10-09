@@ -117,6 +117,15 @@ public class Client {
 			input = sc.nextLine();
 		}
 		result += (Long.parseLong(input) * 60000L);
+		System.out.println("(Optional) Give a startprice");
+		String startPrice = sc.nextLine();
+		if(!startPrice.isEmpty()){
+			while(!isInteger(startPrice)){
+				System.out.println("Not a number, try again: ");
+				startPrice = sc.nextLine();
+			}
+			result += "<>" + startPrice;
+		}
 		return result;
 	}
 	
