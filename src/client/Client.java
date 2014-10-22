@@ -182,16 +182,19 @@ public class Client {
 	 */
 	public static String longToReadableTimeLeft(long date){
 		long dif = date - System.currentTimeMillis();
-		int hours = (int) (dif / 360000);
-		dif = dif % 360000;
-		int min = (int) (dif / 60000);
-		dif = dif % 60000;
-		int sec = (int) (dif / 1000);
-		String result = "";
-		if(hours > 0)	{result += "Hours: " + hours;}
-		if(min > 0)		{result += "\nMinutes: " + min;}
-		if(sec > 0)		{result += "\nSeconds: " + sec;}
-		return 	result;
+		if(dif > 0){
+			int hours = (int) (dif / 360000);
+			dif = dif % 360000;
+			int min = (int) (dif / 60000);
+			dif = dif % 60000;
+			int sec = (int) (dif / 1000);
+			String result = "";
+			if(hours > 0)	{result += "Hours: " + hours;}
+			if(min > 0)		{result += "\nMinutes: " + min;}
+			if(sec > 0)		{result += "\nSeconds: " + sec;}
+			return 	result;
+		}
+		return "Auction ended";
 	}
 	
 	/**
@@ -224,12 +227,29 @@ public class Client {
 					case "highestOffer" 	: handleHighestOffer(sc1); break;
 					case "auctionEnds"		: handleAuctionEnds(sc1); break;
 					case "error"	    	: handleError(sc1); break;
+					case "winner"			: handleWinner(sc1); break;
 					}
 					sc1.close();
 				}
 			} catch (IOException e1) {
 				connected = false;
 			}
+		}
+
+		private void handleWinner(Scanner sc1) {
+			System.out.println("Winnaar van de volgende veiling:");
+			if(sc1.hasNextInt()){
+				int auctionId = sc1.nextInt();
+				PrintWriter writer = null;
+				try {
+					writer = new PrintWriter(socket.getOutputStream());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				writer.println("getAuctionInfo " + auctionId);
+				writer.flush();
+			}
+			
 		}
 
 		//Done
@@ -275,6 +295,8 @@ public class Client {
 				result += "\nDescription: " + auctionDesc;
 				String highestBid = sc2.next();
 				result += "\nHighest bid: " + highestBid;
+				String ended = sc2.next();
+				result += "\nEnded: " + ended;
 				sc2.close();
 			}
 			if(result.isEmpty()){

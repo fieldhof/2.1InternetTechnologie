@@ -2,13 +2,11 @@ package server;
 
 public class Auction {
 	
-	private String item;
-	private String desc;
+	private String item, desc;
 	private long expirationDate;
-	private int highestBid;
+	private int highestBid, id;
 	private Account highestBidder;
 	private static int lastID = 0;
-	private int id;
 	
 	public Auction(String item, String desc, long duration, int lowestPrice) {
 		this(item, desc, duration);
@@ -62,5 +60,11 @@ public class Auction {
 		}
 		return false;
 	}
+	
+	public boolean hasEnded() {
+		return expirationDate <= System.currentTimeMillis();
+	}
+	
+	
 
 }

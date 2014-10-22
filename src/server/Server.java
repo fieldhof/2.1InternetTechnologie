@@ -15,14 +15,15 @@ public class Server {
 	private ServerSocket serverSocket;
 	private static final int SERVER_PORT = 8080;
 	ArrayList<Socket> clients = new ArrayList<Socket>();
-	ArrayList<Auction> auctions = new ArrayList<Auction>();
+	ArrayList<Auction> activeAuctions = new ArrayList<Auction>();
+	ArrayList<Auction> endedAuctions = new ArrayList<Auction>();
 	ArrayList<Account> accounts = new ArrayList<Account>();
 
 	public Server() {
-		auctions.add(new Auction("Macbook", "laptop", 60000));
-		auctions.add(new Auction("Lenovo", "laptop", 60000));
-		auctions.add(new Auction("iMac", "scherm + computer", 60000));
-		auctions.add(new Auction("Mac", "prullenbak", 60000));
+		activeAuctions.add(new Auction("Macbook", "laptop", 30000));
+		activeAuctions.add(new Auction("Lenovo", "laptop", 30000));
+		activeAuctions.add(new Auction("iMac", "scherm + computer", 60000));
+		activeAuctions.add(new Auction("Mac", "prullenbak", 60000));
 		accounts.add(new Account("marco", "jansen"));
 		accounts.add(new Account("daan", "veldhof"));
 		accounts.add(new Account("paul", "degroot"));
@@ -39,6 +40,7 @@ public class Server {
 			e.printStackTrace();
 		}
 		System.out.println("Server is ready...");
+		new AuctionWatcher().start();
 		while (true) {
 			try {
 				Socket socket = serverSocket.accept();
@@ -51,7 +53,12 @@ public class Server {
 	}
 	
 	private Auction getAuction(int auctionId){
-		for(Auction auction : auctions){
+		for(Auction auction : activeAuctions){
+			if(auction.getId() == auctionId){
+				return auction;
+			}
+		}
+		for(Auction auction : endedAuctions){
 			if(auction.getId() == auctionId){
 				return auction;
 			}
@@ -60,12 +67,48 @@ public class Server {
 	}
 	
 	private boolean isAuction(int auctionId){
-		for(Auction auction : auctions){
+		for(Auction auction : activeAuctions){
+			if(auction.getId() == auctionId){
+				return true;
+			}
+		}
+		for(Auction auction : endedAuctions){
 			if(auction.getId() == auctionId){
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	private class AuctionWatcher extends Thread {
+		
+		@Override
+		public void run() {
+			while(true){
+				for(int i = 0; i < activeAuctions.size(); i++){
+					Auction auction = activeAuctions.get(i);
+					if(auction.hasEnded()){
+						endedAuctions.add(activeAuctions.remove(i));
+						i--;
+						if(auction.getHighestBidder()!= null){
+							PrintWriter writer = null;
+							try {
+								writer = new PrintWriter(auction.getHighestBidder().getSocket().getOutputStream());
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							writer.println("winner " + auction.getId());
+							writer.flush();
+						}
+					}
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	// Als er een verbinding tot stand is gebracht, start een nieuwe thread.
@@ -98,6 +141,7 @@ public class Server {
 						writer.println("badLogin");
 						writer.flush();
 					} else {
+						account.setSocket(threadSocket);
 						connected = true;
 						writer.println("Hello");
 						writer.flush();
@@ -139,23 +183,27 @@ public class Server {
 			}
 		}
 
-		
+		//Done
 		private String doOffer(Scanner sc) {
 			String result = "doOffer ";
 			sc.useDelimiter("<>");
+			sc.skip(" ");
 			if(sc.hasNextInt()){
 				int auctionId = sc.nextInt();
 				if(isAuction(auctionId)){
 					Auction auction = getAuction(auctionId);
-					if(sc.hasNextInt()){
-						int price = sc.nextInt();
-						if(price > auction.getHighestBid()){
-							auction.setHighestBid(price, account);
-							return result + "true";
+					if(!auction.hasEnded()){
+						if(sc.hasNextInt()){
+							int price = sc.nextInt();
+							if(price > auction.getHighestBid()){
+								auction.setHighestBid(price, account);
+								return result + "true";
+							}
+							return result + "false";
 						}
-						return result + "false";
+						return "error No valid price given";
 					}
-					return "error No valid price given";
+					return "error auction " + auction.getId() + " has ended";
 				}
 				return "error Auction doesn't exist";
 			}
@@ -181,7 +229,11 @@ public class Server {
 			if(sc.hasNextInt()){
 				int auctionId = sc.nextInt();
 				if(isAuction(auctionId)){
-					return result + getAuction(auctionId).getHighestBid();
+					Auction auction = getAuction(auctionId);
+					if(!auction.hasEnded()){
+						return result + getAuction(auctionId).getHighestBid();
+					}
+					return "error auction " + auctionId + " has ended";
 				}
 				return "error auction " + auctionId + " doesn't exist";
 			}
@@ -195,7 +247,7 @@ public class Server {
 				int auctionId = sc.nextInt();
 				if(isAuction(auctionId)){
 					Auction auction = getAuction(auctionId);
-					return result + auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid();
+					return result + auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid() + "," + auction.hasEnded();
 				}
 				return "error auction " + auctionId + " doesn't exist";
 			}
@@ -207,8 +259,8 @@ public class Server {
 			if(sc.hasNext()){
 				String keyword = sc.next();
 				String result = "searchAuctions ";
-				for(Auction auction : auctions){
-					if(auction.contains(keyword)){
+				for(Auction auction : activeAuctions){
+					if(auction.contains(keyword) && !auction.hasEnded()){
 						result += auction.getId() + "," + auction.getItem() + "," + auction.getDesc() + "," + auction.getHighestBid() + "<>";
 					}
 				}
@@ -228,9 +280,9 @@ public class Server {
 						long itemDuration = sc.nextLong();
 						if(sc.hasNextInt()){
 							int lowestPrice = sc.nextInt();
-							auctions.add(new Auction(itemName, itemDesc, itemDuration, lowestPrice));
+							activeAuctions.add(new Auction(itemName, itemDesc, itemDuration, lowestPrice));
 						}else{
-							auctions.add(new Auction(itemName, itemDesc, itemDuration));
+							activeAuctions.add(new Auction(itemName, itemDesc, itemDuration));
 						}
 						return "addAuction true";
 					}
@@ -238,11 +290,14 @@ public class Server {
 			}
 			return "error no valid parameters for addAuction";
 		}
+		
 		//Done
 		private String getAuctions() {
 			String result = "getAuctions ";
-			for(Auction auction : auctions){
-				result += auction.getId() + "," + auction.getItem() + "," + auction.getDesc() + "<>";
+			for(Auction auction : activeAuctions){
+				if(!auction.hasEnded()){
+					result += auction.getId() + "," + auction.getItem() + "," + auction.getDesc() + "<>";
+				}
 			}
 			return result;
 		}
