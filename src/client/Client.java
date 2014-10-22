@@ -258,10 +258,10 @@ public class Client {
 			while(sc1.hasNext()){
 				sc1.useDelimiter("<>");
 				String product = sc1.next();
-				product = product.replaceFirst(" ", "");
+//				product = product.replaceFirst(" ", "");
 				Scanner sc2 = new Scanner(product);
 				sc2.useDelimiter(",");
-				String itemId = sc2.next();
+				String itemId = sc2.next().replaceFirst(" ", "");
 				result += "\n\nid: " + itemId;
 				String itemName = sc2.next();
 				itemName = itemName.replaceFirst(" ", "");
@@ -283,10 +283,10 @@ public class Client {
 			while(sc1.hasNext()){
 				sc1.useDelimiter("<>");
 				String product = sc1.next();
-				product = product.replaceFirst(" ", "");
+//				product = product.replaceFirst(" ", "");
 				Scanner sc2 = new Scanner(product);
 				sc2.useDelimiter(",");
-				String itemId = sc2.next();
+				String itemId = sc2.next().replaceFirst(" ", "");
 				result += "\n\nId: " + itemId;
 				String itemName = sc2.next();
 				itemName = itemName.replaceFirst(" ", "");
@@ -310,7 +310,7 @@ public class Client {
 		private void handleGetAuctionInfo(Scanner sc1) {
 			if(sc1.hasNext()){
 				String auction = sc1.next();
-				auction = auction.replace(" ", "");
+//				auction = auction.replace(" ", "");
 				Scanner sc2 = new Scanner(auction);
 				sc2.useDelimiter(",");
 				String itemName = sc2.next();
