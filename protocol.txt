@@ -17,7 +17,7 @@ searchAuctions [keyword]
 
 getAuctionInfo [auctionID]
 
-addAuction [itemName]<>[itemDescription]
+addAuction [itemName]<>[itemDescription]<>[itemDuration]<>[*minOffer]	(*optioneel)
 
 doOffer [auctionID]<>[amount]
 
