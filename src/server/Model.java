@@ -2,11 +2,18 @@ package server;
 
 import java.util.ArrayList;
 
+/**
+ * Model
+ * Has a list of auctions and accounts
+ */
 public class Model {
 	
 	private ArrayList<Auction> activeAuctions, endedAuctions;
 	private ArrayList<Account> accounts;
 	
+	/**
+	 * Constructor, creates the arraylists and model with hardcoded accounts and auctions.
+	 */
 	public Model() {
 		activeAuctions = new ArrayList<Auction>();
 		endedAuctions = new ArrayList<Auction>();
@@ -22,6 +29,10 @@ public class Model {
 		accounts.add(new Account("test", "server"));
 	}
 	
+	/**
+	 * Returns all auctions (Active and ended)
+	 * @return	All auctions
+	 */
 	public ArrayList<Auction> getAuctions(){
 		ArrayList<Auction> result = new ArrayList<Auction>();
 		result.addAll(endedAuctions);
@@ -37,6 +48,11 @@ public class Model {
 		return activeAuctions;
 	}
 	
+	/**
+	 * Gets auction that matches the auction id(Parameter)
+	 * @param auctionId		Auction id
+	 * @return				Auction with the given auctionid or null if it doesn't exist.
+	 */
 	public Auction getAuction(int auctionId){
 		for(Auction auction : activeAuctions){
 			if(auction.getId() == auctionId){
@@ -51,6 +67,11 @@ public class Model {
 		return null;
 	}
 	
+	/**
+	 * Checks if an auction with given auction id (parameter) exists.
+	 * @param auctionId		Auction id
+	 * @return				True if auction exists, null if auction doesn't exist.
+	 */
 	public boolean isAuction(int auctionId){
 		for(Auction auction : activeAuctions){
 			if(auction.getId() == auctionId){
@@ -69,6 +90,13 @@ public class Model {
 		return accounts;
 	}
 	
+	
+	/**
+	 * Gets account with given username and password uses Account.isThisAccount method
+	 * @param username		Username
+	 * @param password		Password
+	 * @return				Account if account exists. Null if account doesn't exist.
+	 */
 	public Account getAccount(String username, String password){
 		for(Account account : accounts){
 			if(account.isThisAccount(username, password)){

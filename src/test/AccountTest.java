@@ -8,6 +8,9 @@ import org.junit.Test;
 
 import server.Account;
 
+/**
+ * Unit test for Account class
+ */
 public class AccountTest {
 	Account account1;
 	Account account2;

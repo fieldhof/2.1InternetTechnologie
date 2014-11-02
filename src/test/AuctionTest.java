@@ -8,6 +8,9 @@ import org.junit.Test;
 import server.Account;
 import server.Auction;
 
+/**
+ * Unit test for Auction class
+ */
 public class AuctionTest {
 	Auction auctionOne, auctionTwo,auctionThree;
 	Account account;
