@@ -73,7 +73,14 @@ public class ClientListener extends Thread {
 					return;
 				}
 				System.out.println(message);
-				Scanner sc = new Scanner(message);
+				Scanner sc = null;
+				if (message != null ) {
+					sc = new Scanner(message);
+					
+				} else {
+					System.out.println("Verbinding met " + account.getUsername() + " verbroken.");
+					return;
+				}
 				String function = sc.next();
 				String response = "";
 				switch(function){//call the method that corresponds with the message
