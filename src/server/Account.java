@@ -19,6 +19,10 @@ public class Account {
 	public String getUsername() {
 		return username;
 	}
+	
+	public String getPassword() {
+		return password;
+	}
 
 	public void setSocket(Socket threadSocket) {
 		this.socket = threadSocket;
