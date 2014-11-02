@@ -27,7 +27,7 @@ public class AuctionTest {
 		assertEquals("laptop", auction.getDesc());
 		assertEquals(3000000, auction.getExpirationDate() - System.currentTimeMillis());
 		assertEquals(0,auction.getHighestBid());
-		assertEquals(null, auction.getHighestBidder());
+		assertNull(auction.getHighestBidder());
 		
 		assertNotEquals("windows", auction.getItem());
 		assertNotEquals("desktop", auction.getDesc());
@@ -43,7 +43,7 @@ public class AuctionTest {
 		assertEquals("computer", auction2.getDesc());
 		assertEquals(3000000, auction2.getExpirationDate() - System.currentTimeMillis());
 		assertEquals(20,auction2.getHighestBid());
-		assertEquals(null, auction2.getHighestBidder());
+		assertNull(auction2.getHighestBidder());
 		
 		assertNotEquals("windows", auction2.getItem());
 		assertNotEquals("laptop", auction2.getDesc());

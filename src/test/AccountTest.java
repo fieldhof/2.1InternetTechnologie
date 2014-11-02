@@ -23,6 +23,8 @@ public class AccountTest {
 		Account account = new Account("Piet","Klaas");
 		assertEquals("Piet", account.getUsername());
 		assertEquals("Klaas", account.getPassword());
+		assertNull(account.getSocket());
+		
 		assertNotEquals("Klaas", account.getUsername());
 		assertNotEquals("Piet", account.getPassword());
 	}
@@ -31,6 +33,7 @@ public class AccountTest {
 	public void testIsThisAccount() throws Exception {
 		assertTrue(account1.isThisAccount("testEen", "testEen"));
 		assertFalse(account1.isThisAccount("testTwee", "testTwee"));
+		assertNull(account1.getSocket());
 		
 		assertTrue(account2.isThisAccount("testTwee", "testTwee"));
 		assertFalse(account2.isThisAccount("testTwee", "testEen"));
