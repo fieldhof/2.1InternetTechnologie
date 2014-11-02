@@ -19,6 +19,7 @@ public class Model {
 		accounts.add(new Account("marco", "jansen"));
 		accounts.add(new Account("daan", "veldhof"));
 		accounts.add(new Account("paul", "degroot"));
+		accounts.add(new Account("test", "server"));
 	}
 	
 	public ArrayList<Auction> getAuctions(){
