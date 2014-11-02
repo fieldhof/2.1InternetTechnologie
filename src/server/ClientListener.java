@@ -8,6 +8,10 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Scanner;
 
+import model.Account;
+import model.Auction;
+import model.Model;
+
 /**
  * ClientListener class
  * Creates a thread that handles the incoming messages of the client

@@ -1,12 +1,11 @@
 package test;
 
 import static org.junit.Assert.*;
+import model.Account;
+import model.Auction;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import server.Account;
-import server.Auction;
 
 /**
  * Unit test for Auction class

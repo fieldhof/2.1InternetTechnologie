@@ -3,6 +3,9 @@ package server;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import model.Auction;
+import model.Model;
+
 /**
  * Auctionwatcher
  * Checks every second if an auction has expired.

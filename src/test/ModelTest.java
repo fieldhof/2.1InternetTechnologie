@@ -1,11 +1,10 @@
 package test;
 
 import static org.junit.Assert.*;
+import model.Model;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import server.Model;
 
 /**
  * Unit test for model

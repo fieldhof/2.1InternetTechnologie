@@ -1,12 +1,10 @@
 package test;
 
 import static org.junit.Assert.*;
-
+import model.Account;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import server.Account;
 
 /**
  * Unit test for Account class
