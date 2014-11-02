@@ -43,7 +43,7 @@ public class Client {
 		} catch (IOException e) {
 			//If connection couldn't be made
 			System.out.println("Connection refused");
-			e.printStackTrace();
+			return;
 		}
 		
 		//while the user is not logged in, try to log in

@@ -34,7 +34,13 @@ public class ServerListener extends Thread {
 			while (true) {
 				//read incoming message
 				String message = reader.readLine();
-				Scanner sc1 = new Scanner(message);
+				Scanner sc1 = null;
+				if (message != null) {
+					sc1 = new Scanner(message);					
+				} else {
+					System.out.println("Server is not responding.");
+					return;
+				}
 				
 				//call the right method
 				switch(sc1.next()){
@@ -51,7 +57,6 @@ public class ServerListener extends Thread {
 				sc1.close();
 			}
 		} catch (IOException e1) {
-			
 		}
 	}
 
